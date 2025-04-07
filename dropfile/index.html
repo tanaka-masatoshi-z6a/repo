@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload to Azure Blob</title>
+  <style>
+    #drop-area {
+      width: 400px;
+      height: 200px;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      color: #aaa;
+    }
+    #drop-area.dragover {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <h1>ファイルをドロップしてアップロード</h1>
+  <div id="drop-area">ここにファイルをドロップ</div>
+  <script>
+    const dropArea = document.getElementById('drop-area');
+
+    dropArea.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropArea.classList.add('dragover');
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.classList.remove('dragover');
+    });
+
+    dropArea.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropArea.classList.remove('dragover');
+      
+      const file = event.dataTransfer.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // ファイルをサーバーに送信
+        fetch('/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.text())
+        .then(result => alert(result))
+        .catch(error => alert('Error uploading file: ' + error));
+      }
+    });
+  </script>
+</body>
+</html>
